@@ -5,8 +5,6 @@ import (
 	"log"
 	"net/http"
 	"strings"
-
-	"github.com/jmoiron/sqlx"
 )
 
 //Kitab struct
@@ -30,15 +28,9 @@ func kitab(resp http.ResponseWriter, req *http.Request) {
 
 //getKitab funtion show list of available Kitab
 func getKitab() []Kitab {
-	db, err := sqlx.Connect("mysql", "root@(localhost:3306)/takhrij")
-	if err != nil {
-		log.Fatalln(err)
-	}
 
 	tables := []string{}
 	kutub := Kutub{}
-
-	err = db.Select(&tables, "SHOW TABLES")
 
 	for _, val := range tables {
 		if strings.Contains(val, "Hadits_") {
