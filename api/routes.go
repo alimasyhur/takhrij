@@ -19,6 +19,9 @@ var routes = Routes{
 	Route{"kitab", "GET", "/kitab/{start:[0-9]+}/{count:[0-9]}", getListKitab},
 	Route{"kitab", "GET", "/kitab/{id:[0-9]+}", getKitab},
 	Route{"kitab", "POST", "/kitab", createKitab},
+	Route{"kitab", "PUT", "/kitab/{id:[0-9]+}", updateKitab},
+	Route{"kitab", "DELETE", "/kitab/{id:[0-9]+}", deleteKitab},
+	Route{"kitab", "GET", "/kitab/archived/{start:[0-9]+}/{count:[0-9]}", getArchivedKitab},
 	//Route of hadits
 	// Route{"hadits", "GET", "/hadits/{id_kitab:[0-9]+}", getHaditses},
 	// Route{"hadits", "GET", "/hadits/{id:[0-9]+}/{id_kitab:[0-9]+}", getHadits},

@@ -45,34 +45,78 @@ func createKitab(resp http.ResponseWriter, req *http.Request) {
 	var k model.Kitab
 	decoder := json.NewDecoder(req.Body)
 	if err := decoder.Decode(&k); err != nil {
-		errResp := ErrorResp{
-			Code:    http.StatusBadRequest,
-			Message: err.Error(),
-		}
-		response, _ := json.Marshal(errResp)
-		resp.Write([]byte(response))
+		responseWithMessage(resp, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	defer req.Body.Close()
 
 	if err := k.Create(); err != nil {
-		errResp := ErrorResp{
-			Code:    http.StatusInternalServerError,
-			Message: err.Error(),
-		}
-
-		response, _ := json.Marshal(errResp)
-
-		resp.Write([]byte(response))
+		responseWithMessage(resp, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	errResp := ErrorResp{
-		Code:    http.StatusOK,
-		Message: "Success Create New Kitab",
+	responseWithMessage(resp, http.StatusOK, "Kitab Successfully Created")
+}
+
+//updateKitab endpoint
+func updateKitab(resp http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		responseWithMessage(resp, http.StatusBadRequest, err.Error())
+		return
 	}
 
-	response, _ := json.Marshal(errResp)
+	var k model.Kitab
+	decoder := json.NewDecoder(req.Body)
+	if err := decoder.Decode(&k); err != nil {
+		responseWithMessage(resp, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	defer req.Body.Close()
+	k.ID = id
+
+	if err := k.Update(); err != nil {
+		responseWithMessage(resp, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	responseWithMessage(resp, http.StatusOK, "Kitab "+k.Name+" Successfully Updated")
+}
+
+//deleteKitab endpoint
+func deleteKitab(resp http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		responseWithMessage(resp, http.StatusBadRequest, err.Error())
+		return
+	}
+	defer req.Body.Close()
+	k := model.Kitab{ID: id}
+
+	if err := k.Delete(); err != nil {
+		responseWithMessage(resp, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	responseWithMessage(resp, http.StatusOK, "Kitab "+k.Name+" Successfully Deleted")
+}
+
+//getArchivedKitab handler return all list available kitab
+func getArchivedKitab(resp http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	count, _ := strconv.Atoi(vars["count"])
+	start, _ := strconv.Atoi(vars["start"])
+
+	kitabs, err := model.GetArchivedKitab(start, count)
+	response, _ := json.Marshal(kitabs)
+
+	if err != nil {
+		resp.Write([]byte(err.Error()))
+		return
+	}
 	resp.Write([]byte(response))
 }

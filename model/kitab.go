@@ -61,3 +61,37 @@ func (k Kitab) Create() error {
 	}
 	return nil
 }
+
+//Update Kitab method
+func (k Kitab) Update() error {
+	_, err := db.Exec("UPDATE Kitab SET name=? WHERE id=?",
+		k.Name, k.ID)
+
+	return err
+}
+
+//Delete Kitab method
+func (k Kitab) Delete() error {
+	_, err := db.Exec("UPDATE Kitab SET status=? WHERE id=?",
+		k.Status, k.ID)
+
+	return err
+}
+
+//GetArchivedKitab return list available kitab with parameter limit and offset
+func GetArchivedKitab(start, count int) ([]Kitab, error) {
+	k := Kitab{}
+	kitabs := []Kitab{}
+	rows, err := db.Queryx("SELECT * FROM Kitab WHERE status=0 LIMIT ? OFFSET ?", start, count)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		err := rows.StructScan(&k)
+		if err != nil {
+			return nil, err
+		}
+		kitabs = append(kitabs, k)
+	}
+	return kitabs, nil
+}
