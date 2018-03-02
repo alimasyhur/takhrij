@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/alimasyhur/takhrij/api"
-	database "github.com/alimasyhur/takhrij/database"
+	"github.com/alimasyhur/takhrij/model"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -14,9 +14,9 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	// defer db.Close()
+	defer db.Close()
 
-	database.Configure(db)
+	model.Configure(db)
 
 	api.Start()
 }
