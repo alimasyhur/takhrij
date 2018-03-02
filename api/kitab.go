@@ -2,51 +2,77 @@ package api
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
-	"strings"
+	"strconv"
+
+	"github.com/alimasyhur/takhrij/model"
+	"github.com/gorilla/mux"
 )
 
-//Kitab struct
-type Kitab struct {
-	Table string `json:"table"`
-	Name  string `json:"name"`
+//kitab handler return all list available kitab
+func getListKitab(resp http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	count, _ := strconv.Atoi(vars["count"])
+	start, _ := strconv.Atoi(vars["start"])
+
+	kitabs, err := model.GetListKitab(start, count)
+	response, _ := json.Marshal(kitabs)
+
+	if err != nil {
+		resp.Write([]byte(err.Error()))
+		return
+	}
+	resp.Write([]byte(response))
 }
 
-//Kutub struct list of Kitab
-type Kutub struct {
-	Tables []Kitab
-}
+//GetKitab handler return one selected kitab by id
+func getKitab(resp http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, _ := strconv.Atoi(vars["id"])
 
-func kitab(resp http.ResponseWriter, req *http.Request) {
-	log.Println(getKitab())
-
-	listKitab, _ := json.Marshal(getKitab())
-
-	resp.Write([]byte(listKitab))
-}
-
-//getKitab funtion show list of available Kitab
-func getKitab() []Kitab {
-
-	tables := []string{}
-	kutub := Kutub{}
-
-	for _, val := range tables {
-		if strings.Contains(val, "Hadits_") {
-			trimmedPrefix := strings.TrimPrefix(val, "Hadits_")
-			kutub.AddKitab(Kitab{
-				Table: val,
-				Name:  strings.Replace(trimmedPrefix, "_", " ", 1),
-			})
-		}
+	kitab := model.Kitab{ID: id}
+	response, _ := json.Marshal(kitab)
+	if err := kitab.Get(); err != nil {
+		resp.Write([]byte(err.Error()))
+		return
 	}
 
-	return kutub.Tables
+	resp.Write([]byte(response))
 }
 
-//AddKitab method
-func (kutub *Kutub) AddKitab(kitab Kitab) []Kitab {
-	kutub.Tables = append(kutub.Tables, kitab)
-	return kutub.Tables
+//createKitab endpoint
+func createKitab(resp http.ResponseWriter, req *http.Request) {
+	var k model.Kitab
+	decoder := json.NewDecoder(req.Body)
+	if err := decoder.Decode(&k); err != nil {
+		errResp := ErrorResp{
+			Code:    http.StatusBadRequest,
+			Message: err.Error(),
+		}
+		response, _ := json.Marshal(errResp)
+		resp.Write([]byte(response))
+		return
+	}
+
+	defer req.Body.Close()
+
+	if err := k.Create(); err != nil {
+		errResp := ErrorResp{
+			Code:    http.StatusInternalServerError,
+			Message: err.Error(),
+		}
+
+		response, _ := json.Marshal(errResp)
+
+		resp.Write([]byte(response))
+		return
+	}
+
+	errResp := ErrorResp{
+		Code:    http.StatusOK,
+		Message: "Success Create New Kitab",
+	}
+
+	response, _ := json.Marshal(errResp)
+	resp.Write([]byte(response))
 }

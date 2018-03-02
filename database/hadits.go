@@ -1,18 +1,23 @@
 package database
 
-import (
-	"log"
+//GetHaditsByIDKitab query to get on available hadits
+// func GetHaditsByIDKitab(idKitab string) (hadits []model.Hadits) {
+// 	data := []model.Hadits{}
+// 	err := db.Select(&data, "SELECT * FROM hadits WHERE id_kitab=? LIMIT 20", idKitab)
 
-	model "github.com/alimasyhur/takhrij/model"
-)
+// 	if err != nil {
+// 		log.Fatalln(err)
+// 	}
+// 	return data
+// }
 
-//GetOneHadits query to get on available hadits
-func GetOneHadits() (hadits *model.MusnadAhmad) {
-	err := db.Get(&hadits, "SELECT * FROM Hadits_Musnad_Ahmad LIMIT 1")
+// //GetOneHadits query to get on available hadits
+// func GetOneHadits(id, idKitab string) (hadits model.Hadits) {
+// 	data := model.Hadits{}
+// 	err := db.Get(&data, "SELECT * FROM hadits WHERE id=? AND id_kitab=?", id, idKitab)
 
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	return hadits
-}
+// 	if err != nil {
+// 		log.Fatalln(err)
+// 	}
+// 	return data
+// }

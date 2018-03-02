@@ -1,17 +1,27 @@
 package api
 
 import (
-	"encoding/json"
-	"net/http"
-
-	"github.com/alimasyhur/takhrij/database"
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func hadits(resp http.ResponseWriter, req *http.Request) {
-	data := database.GetOneHadits()
+// func getHaditses(resp http.ResponseWriter, req *http.Request) {
+// 	vars := mux.Vars(req)
 
-	listHadits, _ := json.Marshal(data)
+// 	data := database.GetHaditsByIDKitab(vars["id_kitab"])
 
-	resp.Write([]byte(listHadits))
-}
+// 	hadits, _ := json.Marshal(data)
+
+// 	resp.Write([]byte(hadits))
+// }
+
+// func getHadits(resp http.ResponseWriter, req *http.Request) {
+// 	vars := mux.Vars(req)
+
+// 	data := database.GetOneHadits(vars["id"], vars["id_kitab"])
+
+// 	log.Println(data)
+
+// 	hadits, _ := json.Marshal(data)
+
+// 	resp.Write([]byte(hadits))
+// }
