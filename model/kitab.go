@@ -95,3 +95,12 @@ func GetArchivedKitab(start, count int) ([]Kitab, error) {
 	}
 	return kitabs, nil
 }
+
+//DeletePermanent Kitab method, Delete permanent also delete all hadits related to Kitab
+func (k Kitab) DeletePermanent() error {
+	_, err := db.Exec("DELETE FROM Kitab WHERE id=?", k.ID)
+
+	_, err = db.Exec("DELETE FROM Hadits WHERE id_kitab=?", k.ID)
+
+	return err
+}

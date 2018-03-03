@@ -120,3 +120,22 @@ func getArchivedKitab(resp http.ResponseWriter, req *http.Request) {
 	}
 	resp.Write([]byte(response))
 }
+
+//deletePermanentKitab endpoint
+func deletePermanentKitab(resp http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		responseWithMessage(resp, http.StatusBadRequest, err.Error())
+		return
+	}
+	defer req.Body.Close()
+	k := model.Kitab{ID: id}
+
+	if err := k.DeletePermanent(); err != nil {
+		responseWithMessage(resp, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	responseWithMessage(resp, http.StatusOK, "Kitab "+k.Name+" Successfully Deleted")
+}
