@@ -26,7 +26,7 @@ func (k Kitab) Validate() error {
 func GetListKitab(start, count int) ([]Kitab, error) {
 	k := Kitab{}
 	kitabs := []Kitab{}
-	rows, err := db.Queryx("SELECT * FROM Kitab WHERE status=1 LIMIT ? OFFSET ?", start, count)
+	rows, err := db.Queryx("SELECT * FROM Kitab WHERE status=1 ORDER BY id LIMIT ? OFFSET ?", start, count)
 	if err != nil {
 		return nil, err
 	}

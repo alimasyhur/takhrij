@@ -51,6 +51,11 @@ func createKitab(resp http.ResponseWriter, req *http.Request) {
 
 	defer req.Body.Close()
 
+	if err := k.Validate(); err != nil {
+		responseWithMessage(resp, http.StatusPreconditionRequired, err.Error())
+		return
+	}
+
 	if err := k.Create(); err != nil {
 		responseWithMessage(resp, http.StatusInternalServerError, err.Error())
 		return
